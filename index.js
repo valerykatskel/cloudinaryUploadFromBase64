@@ -25,7 +25,7 @@ app.post('/upload', (req, res, next) => {
   //const upload = multer({ storage }).single('name-of-input-key')
   //console.log(req.body)
   const imageBuffer = new Buffer.from(req.body.base64Str, 'base64');
-  fs.writeFile(`${process.env.UPLOAD_FOLDER}myfile.png`, imageBuffer , function (err) {
+  fs.writeFile(`${process.env.UPLOAD_FOLDER}shafingImage.png`, imageBuffer , function (err) {
     if (err) return next(err)
 
     res.send('Successfully saved')
