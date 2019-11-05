@@ -22,20 +22,38 @@ const storage = multer.diskStorage({
 
 
 app.post('/upload', (req, res, next) => {
-  //const upload = multer({ storage }).single('name-of-input-key')
-  //console.log(req.body)
   const imageBuffer = new Buffer.from(req.body.base64Str, 'base64');
-  fs.writeFile(`${process.env.UPLOAD_FOLDER}shafingImage.png`, imageBuffer , function (err) {
+  fs.writeFile(`${process.env.UPLOAD_FOLDER}sharingImage.png`, imageBuffer , function (err) {
     if (err) return next(err)
 
-    res.send('Successfully saved')
+    // SEND FILE TO CLOUDINARY
+    const cloudinary = require('cloudinary').v2
+    cloudinary.config({
+      cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+      api_key: process.env.CLOUDINARY_API_KEY,
+      api_secret: process.env.CLOUDINARY_API_SECRET
+    })
+
+    const path = `${process.env.UPLOAD_FOLDER}sharingImage.png`
+    const uniqueFilename = new Date().toISOString()
+
+    cloudinary.uploader.upload(
+      path,
+      { 
+        public_id: `blog/${uniqueFilename}`, 
+        tags: `blog`
+      }, // directory and tags are optional
+      function(err, image) {
+        if (err) return res.send(err)
+        console.log('file uploaded to Cloudinary')
+        // remove file from server
+        const fs = require('fs')
+        fs.unlinkSync(path)
+        // return image details
+        res.json(image)
+      }
+    )
   })
-  // upload(req, res, function(err) {
-  //   if (err) {
-  //     return res.send(err)
-  //   }
-  //   res.json(req.file)
-  // })
 })
 
 app.listen(port)
