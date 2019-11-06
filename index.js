@@ -8,16 +8,16 @@ const port = parseInt(process.env.PORT, 10) || 8080
 
 //CORS middleware
 var allowCrossDomain = function(req, res, next) {
-  res.header('Access-Control-Allow-Origin', '*.tut.by');
+  res.header('Access-Control-Allow-Origin', 'http://katskel.devel.tut.by');
   res.header('Access-Control-Allow-Methods', 'POST');
   res.header('Access-Control-Allow-Headers', 'Content-Type');
 
   next();
 }
-app.configure(() => {
+//app.configure(() => {
   app.use(bodyParser.urlencoded({extended: false}))
   app.use(allowCrossDomain)
-})
+//})
 
 app.get('/', (req, res, next) => {
   res.send('There is no interesting here!')
