@@ -2,22 +2,28 @@
 require('dotenv').config()
 const bodyParser = require('body-parser')
 const fs = require('fs')
+const cors = require('cors')
 const express = require('express')
 const app = express()
 const port = parseInt(process.env.PORT, 10) || 8080
 
-//CORS middleware
-var allowCrossDomain = function(req, res, next) {
-  res.header('Access-Control-Allow-Origin', 'http://katskel.devel.tut.by');
-  res.header('Access-Control-Allow-Methods', 'POST');
-  res.header('Access-Control-Allow-Headers', 'Content-Type');
+var allowedOrigins = ['http://localhost:8080',
+                      'https://tut.by']
 
-  next();
-}
-//app.configure(() => {
-  app.use(bodyParser.urlencoded({extended: false}))
-  app.use(allowCrossDomain)
-//})
+app.use(cors({
+  origin: function(origin, callback){
+    // allow requests with no origin 
+    // (like mobile apps or curl requests)
+    if(!origin) return callback(null, true);
+    if(allowedOrigins.indexOf(origin) === -1){
+      var msg = 'The CORS policy for this site does not ' +
+                'allow access from the specified Origin.';
+      return callback(new Error(msg), false);
+    }
+    return callback(null, true);
+  }
+}))
+app.use(bodyParser.urlencoded({extended: false}))
 
 app.get('/', (req, res, next) => {
   res.send('There is no interesting here!')
