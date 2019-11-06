@@ -6,18 +6,17 @@ const express = require('express')
 const app = express()
 const port = parseInt(process.env.PORT, 10) || 8080
 
-app.use(bodyParser.urlencoded({extended: false}))
+//CORS middleware
+var allowCrossDomain = function(req, res, next) {
+  res.header('Access-Control-Allow-Origin', '*.tut.by');
+  res.header('Access-Control-Allow-Methods', 'POST');
+  res.header('Access-Control-Allow-Headers', 'Content-Type');
 
-// MULTER
-const multer = require('multer')
-const storage = multer.diskStorage({
-  destination: function(req, file, cb) {
-    cb(null, process.env.UPLOAD_FOLDER)
-  },
-  filename: function(req, file, cb) {
-    console.log(file)
-    cb(null, file.originalname)
-  }
+  next();
+}
+app.configure(() => {
+  app.use(bodyParser.urlencoded({extended: false}))
+  app.use(allowCrossDomain)
 })
 
 app.get('/', (req, res, next) => {
