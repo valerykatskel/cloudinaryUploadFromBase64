@@ -20,6 +20,10 @@ const storage = multer.diskStorage({
   }
 })
 
+app.get('/', (req, res, next) => {
+  res = 'There is no interesting here!'
+})
+
 
 app.post('/upload', (req, res, next) => {
   const imageBuffer = new Buffer.from(req.body.base64Str, 'base64');
