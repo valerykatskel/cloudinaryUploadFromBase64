@@ -21,7 +21,7 @@ const storage = multer.diskStorage({
 })
 
 app.get('/', (req, res, next) => {
-  res = 'There is no interesting here!'
+  res.send('There is no interesting here!')
 })
 
 
