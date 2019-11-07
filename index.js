@@ -29,7 +29,7 @@ app.post('/upload', (req, res, next) => {
 
     // SEND FILE TO CLOUDINARY
     const path = `${process.env.UPLOAD_FOLDER}sharingImage.png`
-    const uniqueFilename = new Date().toISOString()
+    const uniqueFilename = `${req.body.de}-${req.body.sp}-${req.body.vr}-${req.body.sm}`
 
     cloudinary.uploader.upload(
       path,
