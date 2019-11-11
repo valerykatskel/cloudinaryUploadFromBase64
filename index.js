@@ -24,15 +24,16 @@ app.get('/', (req, res, next) => {
 
 app.post('/upload', (req, res, next) => {
   const imageBuffer = new Buffer.from(req.body.base64Str, 'base64')
-  fs.writeFile(`${process.env.UPLOAD_FOLDER}sharingImage.png`, imageBuffer , function (err) {
-    if (err) return next(err)
+  
+  ensureExists(__dirname + process.env.UPLOAD_FOLDER, 0744, function(err) {
+    if (err) {
+      res.status(400)
+      res.send('Error during upload folder creating')
+    } else {
+      fs.writeFile(`${process.env.UPLOAD_FOLDER}/sharingImage.png`, imageBuffer , function (err) {
+        if (err) return next(err)
 
-    // SEND FILE TO CLOUDINARY
-    ensureExists(__dirname + process.env.UPLOAD_FOLDER, 0744, function(err) {
-      if (err) {
-        res.status(400)
-        res.send('Error during upload folder creating')
-      } else {
+        // SEND FILE TO CLOUDINARY
         const path = `${__dirname}${process.env.UPLOAD_FOLDER}/sharingImage.png`
         const uniqueFilename = `${req.body.de}-${req.body.sp}-${req.body.vr}-${req.body.sm}`
 
@@ -52,8 +53,8 @@ app.post('/upload', (req, res, next) => {
             res.json(image)
           }
         )
-      }
-    })
+      })
+    }
   })
 })
 
