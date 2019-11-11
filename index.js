@@ -28,26 +28,46 @@ app.post('/upload', (req, res, next) => {
     if (err) return next(err)
 
     // SEND FILE TO CLOUDINARY
-    const path = `${process.env.UPLOAD_FOLDER}sharingImage.png`
-    const uniqueFilename = `${req.body.de}-${req.body.sp}-${req.body.vr}-${req.body.sm}`
+    ensureExists(__dirname + process.env.UPLOAD_FOLDER, 0744, function(err) {
+      if (err) {
+        res.status(400)
+        res.send('Error during upload folder creating')
+      } else {
+        const path = `${process.env.UPLOAD_FOLDER}sharingImage.png`
+        const uniqueFilename = `${req.body.de}-${req.body.sp}-${req.body.vr}-${req.body.sm}`
 
-    cloudinary.uploader.upload(
-      path,
-      { 
-        public_id: `${process.env.CLOUDINARY_UPLOAD_FOLDER}/${uniqueFilename}`, 
-        tags: `quiz`
-      }, // directory and tags are optional
-      function(err, image) {
-        if (err) return res.send(err)
-        console.log('file uploaded to Cloudinary')
-        // remove file from server
-        const fs = require('fs')
-        fs.unlinkSync(path)
-        // return image details
-        res.json(image)
+        cloudinary.uploader.upload(
+          path,
+          { 
+            public_id: `${process.env.CLOUDINARY_UPLOAD_FOLDER}/${uniqueFilename}`, 
+            tags: `quiz`
+          }, // directory and tags are optional
+          function(err, image) {
+            if (err) return res.send(err)
+            console.log('file uploaded to Cloudinary')
+            // remove file from server
+            const fs = require('fs')
+            fs.unlinkSync(path)
+            // return image details
+            res.json(image)
+          }
+        )
       }
-    )
+    })
   })
 })
+
+function ensureExists(path, mask, cb) {
+    if (typeof mask == 'function') { // allow the `mask` parameter to be optional
+        cb = mask;
+        mask = 0777;
+    }
+    fs.mkdir(path, mask, function(err) {
+        if (err) {
+            if (err.code == 'EEXIST') cb(null); // ignore the error if the folder already exists
+            else cb(err); // something else went wrong
+        } else cb(null); // successfully created folder
+    });
+}
 
 app.listen(port)
