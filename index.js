@@ -33,7 +33,7 @@ app.post('/upload', (req, res, next) => {
         res.status(400)
         res.send('Error during upload folder creating')
       } else {
-        const path = `${process.env.UPLOAD_FOLDER}sharingImage.png`
+        const path = `${__dirname}${process.env.UPLOAD_FOLDER}/sharingImage.png`
         const uniqueFilename = `${req.body.de}-${req.body.sp}-${req.body.vr}-${req.body.sm}`
 
         cloudinary.uploader.upload(
