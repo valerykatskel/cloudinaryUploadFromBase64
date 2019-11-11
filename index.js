@@ -25,16 +25,16 @@ app.get('/', (req, res, next) => {
 app.post('/upload', (req, res, next) => {
   const imageBuffer = new Buffer.from(req.body.base64Str, 'base64')
   
-  ensureExists(__dirname + process.env.UPLOAD_FOLDER, 0744, function(err) {
+  ensureExists(process.env.UPLOAD_FOLDER, 0744, function(err) {
     if (err) {
       res.status(400)
       res.send('Error during upload folder creating')
     } else {
-      fs.writeFile(`${process.env.UPLOAD_FOLDER}/sharingImage.png`, imageBuffer , function (err) {
+      fs.writeFile(`${process.env.UPLOAD_FOLDER}sharingImage.png`, imageBuffer , function (err) {
         if (err) return next(err)
 
         // SEND FILE TO CLOUDINARY
-        const path = `${__dirname}${process.env.UPLOAD_FOLDER}/sharingImage.png`
+        const path = `${process.env.UPLOAD_FOLDER}sharingImage.png`
         const uniqueFilename = `${req.body.de}-${req.body.sp}-${req.body.vr}-${req.body.sm}`
 
         cloudinary.uploader.upload(
