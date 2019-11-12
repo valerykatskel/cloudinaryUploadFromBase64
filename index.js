@@ -70,4 +70,6 @@ function ensureExists(path, mask, cb) {
     });
 }
 
-app.listen(port)
+app.listen(port, () => {
+  console.log(`Server run on port ${port}`)
+})
