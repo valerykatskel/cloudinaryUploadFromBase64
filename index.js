@@ -7,6 +7,7 @@ const fs = require('fs')
 const express = require('express')
 const app = express()
 const port = parseInt(process.env.PORT, 10) || 8080
+const timeStamp = +new Date;
 
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
@@ -46,7 +47,7 @@ app.post('/upload', (req, res, next) => {
       if (err) return next(err)
 
       // SEND FILE TO CLOUDINARY
-      const path = `${process.env.UPLOAD_FOLDER}sharingImage.png`
+      const path = `${process.env.UPLOAD_FOLDER}sharingImage${timeStamp}.png`
       const uniqueFilename = `${req.body.de}-${req.body.sp}-${req.body.vr}-${req.body.sm}`
 
       cloudinary.uploader.upload(
