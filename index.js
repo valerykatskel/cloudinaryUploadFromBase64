@@ -15,7 +15,7 @@ cloudinary.config({
 })
 
 //app.use(cors())
-app.use(bodyParser.urlencoded({extended: false}))
+app.use(bodyParser.urlencoded({limit: '50mb', extended: true}))
 
 app.all('/*', function(req, res, next) {
   // CORS headers
