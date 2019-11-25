@@ -7,7 +7,6 @@ const fs = require('fs')
 const express = require('express')
 const app = express()
 const port = parseInt(process.env.PORT, 10) || 8080
-const timeStamp = +new Date
 
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
@@ -36,6 +35,7 @@ app.get('/', (req, res, next) => {
 })
 
 app.post('/upload', (req, res, next) => {
+  const timeStamp = +new Date
   if (!req.body.base64Str) return res.status(400).send("Image not provided!")
   const base64Image = req.body.base64Str
   const imageBuffer = new Buffer.from(base64Image, 'base64')
