@@ -7,7 +7,7 @@ const fs = require('fs')
 const express = require('express')
 const app = express()
 const port = parseInt(process.env.PORT, 10) || 8080
-const timeStamp = +new Date;
+const timeStamp = +new Date
 
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
@@ -43,7 +43,7 @@ app.post('/upload', (req, res, next) => {
   ensureExists(process.env.UPLOAD_FOLDER, 0744, function(err) {
     if (err) res.status(400).send('Error during upload folder creating')
     
-    fs.writeFile(`${process.env.UPLOAD_FOLDER}sharingImage.png`, imageBuffer , function (err) {
+    fs.writeFile(`${process.env.UPLOAD_FOLDER}sharingImage${timeStamp}.png`, imageBuffer , function (err) {
       if (err) return next(err)
 
       // SEND FILE TO CLOUDINARY
