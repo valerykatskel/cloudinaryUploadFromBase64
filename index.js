@@ -9,9 +9,9 @@ const app = express()
 const port = parseInt(process.env.PORT, 10) || 8080
 
 cloudinary.config({
-  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-  api_key: process.env.CLOUDINARY_API_KEY,
-  api_secret: process.env.CLOUDINARY_API_SECRET
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME_2,
+  api_key: process.env.CLOUDINARY_API_KEY_2,
+  api_secret: process.env.CLOUDINARY_API_SECRET_2
 })
 
 //app.use(cors())
@@ -45,15 +45,14 @@ app.post('/upload', (req, res, next) => {
     
     fs.writeFile(`${process.env.UPLOAD_FOLDER}sharingImage${timeStamp}.png`, imageBuffer , function (err) {
       if (err) return next(err)
-
       // SEND FILE TO CLOUDINARY
       const path = `${process.env.UPLOAD_FOLDER}sharingImage${timeStamp}.png`
       const uniqueFilename = `${req.body.de}-${req.body.sp}-${req.body.vr}-${req.body.sm}`
-
+      console.log(`file created ${path} uniqueFilename=${uniqueFilename}`)
       cloudinary.uploader.upload(
         path,
         { 
-          public_id: `${process.env.CLOUDINARY_UPLOAD_FOLDER}/${uniqueFilename}`, 
+          public_id: `${process.env.CLOUDINARY_UPLOAD_FOLDER_2}/${uniqueFilename}`, 
           tags: `quiz`
         }, // directory and tags are optional
         function(err, image) {
