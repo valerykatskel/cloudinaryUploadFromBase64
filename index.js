@@ -40,7 +40,6 @@ app.post("/upload", (req, res, next) => {
   if (!req.body.base64Str) return res.status(400).send("Image not provided!");
   const base64Image = req.body.base64Str;
   const imageBuffer = new Buffer.from(base64Image, "base64");
-
   ensureExists(process.env.UPLOAD_FOLDER, 0744, function (err) {
     if (err) res.status(400).send("Error during upload folder creating");
 
@@ -72,7 +71,7 @@ app.post("/upload", (req, res, next) => {
           }, // directory and tags are optional
           function (err, image) {
             if (err) return res.send(err);
-            console.log(`file ${public_id} has been uploaded to Cloudinary`);
+            console.log(`file ${process.env.CLOUDINARY_UPLOAD_FOLDER}/${uniqueFilename} has been uploaded to Cloudinary`);
             // remove file from server
             const fs = require("fs");
             fs.unlinkSync(path);
