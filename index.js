@@ -7,11 +7,12 @@ const express = require("express");
 const app = express();
 const port = parseInt(process.env.PORT, 10) || 8088;
 
-cloudinary.config({
-  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-  api_key: process.env.CLOUDINARY_API_KEY,
-  api_secret: process.env.CLOUDINARY_API_SECRET,
-});
+// cloudinary.config({
+//   cloud_name: `CLOUDINARY_CLOUD_NAME_${process.env.CLOUDINARY_CLOUD_ID}`,
+//   api_key: `CLOUDINARY_API_KEY_${process.env.CLOUDINARY_CLOUD_ID}`,
+//   api_secret: `CLOUDINARY_API_SECRET_${process.env.CLOUDINARY_CLOUD_ID}`,
+//   upload_folder: `CLOUDINARY_UPLOAD_FOLDER_${process.env.CLOUDINARY_CLOUD_ID}`,
+// });
 
 app.use(cors());
 app.use(bodyParser.urlencoded({ limit: "50mb", extended: true }));
@@ -65,17 +66,27 @@ app.post("/upload", (req, res, next) => {
         }
 
         //console.log(`file created ${path} uniqueFilename=${uniqueFilename}`)
+        const cloudId = process.env.CLOUDINARY_CLOUD_ID;
+        const cloudinaryCloudName = `CLOUDINARY_CLOUD_NAME_${cloudId}`;
+        const cloudinaryApiKey = `CLOUDINARY_API_KEY_${cloudId}`;
+        const cloudinaryApiSecret = `CLOUDINARY_API_SECRET_${cloudId}`;
+        const cloudinaryUploadFolder = `CLOUDINARY_UPLOAD_FOLDER_${cloudId}`;
+
         cloudinary.uploader.upload(
           path,
           {
-            public_id: `${process.env.CLOUDINARY_UPLOAD_FOLDER}/${uniqueFilename}`,
-            tags: `quiz`,
+            public_id: `${process.env[cloudinaryUploadFolder]}/${uniqueFilename}`,
+            tags: "quiz",
             format: "jpg",
+            cloud_name: `${process.env[cloudinaryCloudName]}`,
+            api_key: `${process.env[cloudinaryApiKey]}`,
+            api_secret: `${process.env[cloudinaryApiSecret]}`,
+            upload_folder: `${process.env[cloudinaryUploadFolder]}`,
           }, // directory and tags are optional
           function (err, image) {
             if (err) return res.send(err);
             console.log(
-              `file ${process.env.CLOUDINARY_UPLOAD_FOLDER}/${uniqueFilename} has been uploaded to Cloudinary`
+              `file ${process.env[cloudinaryUploadFolder]}/${uniqueFilename} has been uploaded to Cloudinary`
             );
             // remove file from server
             const fs = require("fs");
