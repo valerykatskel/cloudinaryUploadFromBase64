@@ -41,18 +41,30 @@ app.post("/upload", (req, res, next) => {
   const timeStamp = +new Date();
   let uniqueFilename = "";
   if (!req.body.base64Str) return res.status(400).send("Image not provided!");
+
+  //console.log(`file created ${path} uniqueFilename=${uniqueFilename}`)
+  const cloudId = process.env.CLOUDINARY_CLOUD_ID;
+  const cloudinaryCloudName = `CLOUDINARY_CLOUD_NAME_${cloudId}`;
+  const cloudinaryApiKey = `CLOUDINARY_API_KEY_${cloudId}`;
+  const cloudinaryApiSecret = `CLOUDINARY_API_SECRET_${cloudId}`;
+  let cloudinaryUploadFolder = "";
+  console.log(req.body.upldf);
+  if (req.body.upldf) cloudinaryUploadFolder = req.body.upldf;
+  else
+    cloudinaryUploadFolder = process.env[`CLOUDINARY_UPLOAD_FOLDER_${cloudId}`];
+
   const base64Image = req.body.base64Str;
   const imageBuffer = new Buffer.from(base64Image, "base64");
-  ensureExists(process.env.UPLOAD_FOLDER, 0744, function (err) {
+  ensureExists(cloudinaryUploadFolder, 0744, function (err) {
     if (err) res.status(400).send("Error during upload folder creating");
 
     fs.writeFile(
-      `${process.env.UPLOAD_FOLDER}sharingImage${timeStamp}.jpg`,
+      `${cloudinaryUploadFolder}sharingImage${timeStamp}.jpg`,
       imageBuffer,
       function (err) {
         if (err) return next(err);
         // SEND FILE TO CLOUDINARY
-        const path = `${process.env.UPLOAD_FOLDER}sharingImage${timeStamp}.jpg`;
+        const path = `${cloudinaryUploadFolder}sharingImage${timeStamp}.jpg`;
 
         if (
           req.body.de !== undefined &&
@@ -65,28 +77,21 @@ app.post("/upload", (req, res, next) => {
           uniqueFilename = timeStamp;
         }
 
-        //console.log(`file created ${path} uniqueFilename=${uniqueFilename}`)
-        const cloudId = process.env.CLOUDINARY_CLOUD_ID;
-        const cloudinaryCloudName = `CLOUDINARY_CLOUD_NAME_${cloudId}`;
-        const cloudinaryApiKey = `CLOUDINARY_API_KEY_${cloudId}`;
-        const cloudinaryApiSecret = `CLOUDINARY_API_SECRET_${cloudId}`;
-        const cloudinaryUploadFolder = `CLOUDINARY_UPLOAD_FOLDER_${cloudId}`;
-
         cloudinary.uploader.upload(
           path,
           {
-            public_id: `${process.env[cloudinaryUploadFolder]}/${uniqueFilename}`,
+            public_id: `${cloudinaryUploadFolder}/${uniqueFilename}`,
             tags: "quiz",
             format: "jpg",
             cloud_name: `${process.env[cloudinaryCloudName]}`,
             api_key: `${process.env[cloudinaryApiKey]}`,
             api_secret: `${process.env[cloudinaryApiSecret]}`,
-            upload_folder: `${process.env[cloudinaryUploadFolder]}`,
+            upload_folder: `${cloudinaryUploadFolder}`,
           }, // directory and tags are optional
           function (err, image) {
             if (err) return res.send(err);
             console.log(
-              `file ${process.env[cloudinaryUploadFolder]}/${uniqueFilename} has been uploaded to Cloudinary`
+              `file ${cloudinaryUploadFolder}/${uniqueFilename} has been uploaded to Cloudinary`
             );
             // remove file from server
             const fs = require("fs");
