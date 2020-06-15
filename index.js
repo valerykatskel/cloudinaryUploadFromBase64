@@ -36,6 +36,7 @@ app.get("/", (req, res, next) => {
 
 app.post("/upload", (req, res, next) => {
   const timeStamp = +new Date();
+  console.log(timeStamp);
   let uniqueFilename = "";
   if (!req.body.base64Str) return res.status(400).send("Image not provided!");
   const base64Image = req.body.base64Str;
@@ -71,7 +72,9 @@ app.post("/upload", (req, res, next) => {
           }, // directory and tags are optional
           function (err, image) {
             if (err) return res.send(err);
-            console.log(`file ${process.env.CLOUDINARY_UPLOAD_FOLDER}/${uniqueFilename} has been uploaded to Cloudinary`);
+            console.log(
+              `file ${process.env.CLOUDINARY_UPLOAD_FOLDER}/${uniqueFilename} has been uploaded to Cloudinary`
+            );
             // remove file from server
             const fs = require("fs");
             fs.unlinkSync(path);
