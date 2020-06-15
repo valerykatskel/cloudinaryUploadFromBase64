@@ -70,6 +70,7 @@ app.post("/upload", (req, res, next) => {
           {
             public_id: `${process.env.CLOUDINARY_UPLOAD_FOLDER}/${uniqueFilename}`,
             tags: `quiz`,
+            format: "jpg",
           }, // directory and tags are optional
           function (err, image) {
             if (err) return res.send(err);
