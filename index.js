@@ -1,6 +1,7 @@
 require("dotenv").config();
 const bodyParser = require("body-parser");
 const cloudinary = require("cloudinary").v2;
+const cors = require("cors");
 const fs = require("fs");
 const express = require("express");
 const app = express();
@@ -12,23 +13,24 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
+app.use(cors());
 app.use(bodyParser.urlencoded({ limit: "50mb", extended: true }));
 
-app.all("/*", function (req, res, next) {
-  // CORS headers
-  res.header("Access-Control-Allow-Origin", "*"); // restrict it to the required domain
-  res.header("Access-Control-Allow-Methods", "GET,PUT,POST,DELETE,OPTIONS");
-  // Set custom headers for CORS
-  res.header(
-    "Access-Control-Allow-Headers",
-    "Content-type,Accept,X-Access-Token,X-Key"
-  );
-  if (req.method == "OPTIONS") {
-    res.status(200).end();
-  } else {
-    next();
-  }
-});
+// app.all("/*", function (req, res, next) {
+//   // CORS headers
+//   res.header("Access-Control-Allow-Origin", "*"); // restrict it to the required domain
+//   res.header("Access-Control-Allow-Methods", "GET,PUT,POST,DELETE,OPTIONS");
+//   // Set custom headers for CORS
+//   res.header(
+//     "Access-Control-Allow-Headers",
+//     "Content-type,Accept,X-Access-Token,X-Key"
+//   );
+//   if (req.method == "OPTIONS") {
+//     res.status(200).end();
+//   } else {
+//     next();
+//   }
+// });
 
 app.get("/", (req, res, next) => {
   res.send("There is no interesting here!");
@@ -36,7 +38,6 @@ app.get("/", (req, res, next) => {
 
 app.post("/upload", (req, res, next) => {
   const timeStamp = +new Date();
-  console.log(timeStamp);
   let uniqueFilename = "";
   if (!req.body.base64Str) return res.status(400).send("Image not provided!");
   const base64Image = req.body.base64Str;
