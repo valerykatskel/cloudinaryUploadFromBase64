@@ -46,12 +46,12 @@ app.post("/upload", (req, res, next) => {
     if (err) res.status(400).send("Error during upload folder creating");
 
     fs.writeFile(
-      `${process.env.UPLOAD_FOLDER}sharingImage${timeStamp}.png`,
+      `${process.env.UPLOAD_FOLDER}sharingImage${timeStamp}.jpg`,
       imageBuffer,
       function (err) {
         if (err) return next(err);
         // SEND FILE TO CLOUDINARY
-        const path = `${process.env.UPLOAD_FOLDER}sharingImage${timeStamp}.png`;
+        const path = `${process.env.UPLOAD_FOLDER}sharingImage${timeStamp}.jpg`;
 
         if (
           req.body.de !== undefined &&
